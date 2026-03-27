@@ -1,0 +1,20 @@
+CREATE TABLE IF NOT EXISTS sla_snapshots (
+  ticket_id     INTEGER PRIMARY KEY,
+  number        VARCHAR(20) NOT NULL,
+  title         TEXT,
+  client        VARCHAR(100),
+  module        VARCHAR(50),
+  "group"       VARCHAR(100),
+  person        VARCHAR(100),
+  responsible   VARCHAR(100),
+  team          VARCHAR(20),
+  opening       TIMESTAMPTZ,
+  last_update   TIMESTAMPTZ,
+  sla_minutes   NUMERIC(10,2),
+  sla_formatted VARCHAR(30),
+  voc_minutes   NUMERIC(10,2),
+  voc_formatted VARCHAR(30),
+  processed_at  TIMESTAMPTZ NOT NULL,
+  created_at    TIMESTAMPTZ DEFAULT NOW(),
+  updated_at    TIMESTAMPTZ DEFAULT NOW()
+);
