@@ -27,7 +27,7 @@ Existem dois modos de scraping:
 | `db.js`                                   | Conexao PostgreSQL via `DATABASE_URL` (connection string) + `initDB()` que executa migrations pendentes                                                                               |
 | `migrate.js`                              | Migration runner. Tabela de controle `_migrations_sla`, executa `.sql` de `migrations/` em ordem                                                                                      |
 | `migrations/001_create_sla_snapshots.sql` | Criacao da tabela `sla_snapshots`                                                                                                                                                     |
-| `.env`                                    | Variaveis: `DATABASE_URL`, `PORTAL_LOGIN`, `PORTAL_PASSWORD`, `TEAMS_WEBHOOK_URL`                                                                                                     |
+| `.env`                                    | Variaveis: `DATABASE_URL`, `PORTAL_LOGIN`, `PORTAL_PASSWORD`, `TEAMS_WEBHOOK_URL`, `API_KEY`                                                                                          |
 
 ---
 
@@ -409,6 +409,17 @@ Modulo de acesso a dados para a tabela `TICKETS`. Usa o mesmo `sql` (postgres) d
 
 - `express.json()` -- Parse de JSON body
 - `cors()` -- Permite requisicoes cross-origin de qualquer dominio. Necessario para o userscript `history.js` que chama `GET /alltickets`, `GET /ticket/:ticket` e `POST /ticket` via `fetch()` (sem GM_xmlhttpRequest)
+- **Autenticacao via `API_KEY`** -- Middleware global que protege **todas** as rotas. Verifica o header `Authorization` de cada requisicao contra a variavel `API_KEY` do `.env`. A chave deve ter exatamente 104 caracteres. O servidor nao inicia se `API_KEY` estiver ausente ou com tamanho incorreto.
+
+  Comportamento:
+  - Header `Authorization` ausente -> `401 { error: 'Header Authorization ausente' }`
+  - Header presente mas diferente de `API_KEY` -> `403 { error: 'Chave de autenticacao invalida' }`
+  - Header presente e identico a `API_KEY` -> prossegue para a rota
+
+  Exemplo de requisicao:
+  ```
+  curl -H "Authorization: <sua-chave-de-104-caracteres>" http://localhost:3210/sla/status
+  ```
 
 ### Autenticacao
 

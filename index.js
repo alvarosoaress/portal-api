@@ -24,6 +24,31 @@ const PORT = process.env.PORT || 3210;
 app.use(express.json());
 app.use(cors());
 
+// ─── Autenticacao via API_KEY ──────────────────────────────────
+// Todas as rotas exigem o header Authorization com o valor
+// identico a variavel API_KEY do .env (104 caracteres).
+// ────────────────────────────────────────────────────────────────
+const API_KEY = process.env.API_KEY;
+
+if (!API_KEY || API_KEY.length !== 104) {
+    console.error('ERRO FATAL: API_KEY ausente ou invalida no .env (deve ter exatamente 104 caracteres).');
+    process.exit(1);
+}
+
+app.use((req, res, next) => {
+    const authHeader = req.headers['authorization'];
+
+    if (!authHeader) {
+        return res.status(401).json({ error: 'Header Authorization ausente' });
+    }
+
+    if (authHeader.slice(0, 104) !== API_KEY) {
+        return res.status(403).json({ error: 'Chave de autenticacao invalida' });
+    }
+
+    next();
+});
+
 // ─── Cache SLA em memória + Background Processing ─────────────
 // O POST /sla agora responde imediatamente com dados do banco
 // e dispara o calculo pesado em background. O cache em memoria
