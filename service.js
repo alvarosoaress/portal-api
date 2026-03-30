@@ -53,6 +53,7 @@ export async function upsertSLASnapshots(tickets, processedAt) {
         person: t.person || null,
         responsible: t.responsible || null,
         team: t.team || null,
+        status: t.status || null,
         opening: parseBRToDate(t.opening),
         last_update: parseBRToDate(t.lastUpdate),
         sla_minutes: t.slaMinutes,
@@ -72,7 +73,7 @@ export async function upsertSLASnapshots(tickets, processedAt) {
         await sql`
             INSERT INTO sla_snapshots ${sql(batch,
                 'ticket_id', 'number', 'title', 'client', 'module',
-                'group', 'person', 'responsible', 'team', 'opening', 'last_update',
+                'group', 'person', 'responsible', 'team', 'status', 'opening', 'last_update',
                 'sla_minutes', 'sla_formatted', 'voc_minutes', 'voc_formatted',
                 'processed_at', 'updated_at'
             )}
@@ -85,6 +86,7 @@ export async function upsertSLASnapshots(tickets, processedAt) {
                 person        = EXCLUDED.person,
                 responsible   = EXCLUDED.responsible,
                 team          = EXCLUDED.team,
+                status        = EXCLUDED.status,
                 opening       = EXCLUDED.opening,
                 last_update   = EXCLUDED.last_update,
                 sla_minutes   = EXCLUDED.sla_minutes,
@@ -113,7 +115,7 @@ export async function getSLASnapshots() {
     const rows = await sql`
         SELECT
             ticket_id, number, title, client, module,
-            "group", person, responsible, team,
+            "group", person, responsible, team, status,
             opening, last_update,
             sla_minutes, sla_formatted,
             voc_minutes, voc_formatted,
@@ -141,6 +143,7 @@ export async function getSLASnapshots() {
             person: r.person,
             responsible: r.responsible,
             team: r.team,
+            status: r.status,
             opening: fmtDate(r.opening),
             lastUpdate: fmtDate(r.last_update),
             slaMinutes: r.sla_minutes != null ? Number(r.sla_minutes) : null,

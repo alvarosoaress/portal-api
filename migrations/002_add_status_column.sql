@@ -1,0 +1,1 @@
+ALTER TABLE sla_snapshots ADD COLUMN IF NOT EXISTS status VARCHAR(50);

@@ -423,10 +423,13 @@ export function parseTicketsFromHTML(htmlString) {
                 }
             } catch (_) { /* data inválida, manter null */ }
 
+            const status = ticket.childNodes[4] ? ticket.childNodes[4].innerText.trim() : '';
+
             tickets.push({
                 number: ticket.childNodes[2].innerText,
                 link,
                 title: ticket.childNodes[3].innerText,
+                status,
                 opening: openingStr,
                 openingDate,
                 lastUpdate: lastUpdateStr,

@@ -211,7 +211,8 @@ app.get('/scrape-all/:clientName', async (req, res) => {
                 client: t.client,
                 module: t.module,
                 person: t.person,
-                responsible: t.responsible
+                responsible: t.responsible,
+                status: t.status
             }))
         });
     } catch (error) {
@@ -258,7 +259,8 @@ app.get('/scrape-custom/:customSearchMenuId', async (req, res) => {
                 client: t.client,
                 module: t.module,
                 person: t.person,
-                responsible: t.responsible
+                responsible: t.responsible,
+                status: t.status
             }))
         });
     } catch (error) {

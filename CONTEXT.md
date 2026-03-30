@@ -27,6 +27,7 @@ Existem dois modos de scraping:
 | `db.js`                                   | Conexao PostgreSQL via `DATABASE_URL` (connection string) + `initDB()` que executa migrations pendentes                                                                               |
 | `migrate.js`                              | Migration runner. Tabela de controle `_migrations_sla`, executa `.sql` de `migrations/` em ordem                                                                                      |
 | `migrations/001_create_sla_snapshots.sql` | Criacao da tabela `sla_snapshots`                                                                                                                                                     |
+| `migrations/002_add_status_column.sql`    | Adiciona coluna `status` na tabela `sla_snapshots`                                                                                                                                    |
 | `.env`                                    | Variaveis: `DATABASE_URL`, `PORTAL_LOGIN`, `PORTAL_PASSWORD`, `TEAMS_WEBHOOK_URL`, `API_KEY`                                                                                          |
 
 ---
@@ -168,6 +169,7 @@ Response (quando retorna do banco):
       "person": "FULANO",
       "responsible": "VITOR.OLIVEIRA",
       "team": "N1",
+      "status": "Em andamento",
       "opening": "27/03/2026 14:30",
       "lastUpdate": "27/03/2026 15:45",
       "slaMinutes": 150.5,
@@ -353,6 +355,7 @@ Snapshot por ticket (upsert, uma row por ticket atualizada a cada execucao de `/
 | `person`        | VARCHAR(100)              | Pessoa associada no portal              |
 | `responsible`   | VARCHAR(100)              | Responsavel atual (extraido do grid)    |
 | `team`          | VARCHAR(20)               | Equipe (ex: "N1")                       |
+| `status`        | VARCHAR(50)               | Status atual do ticket (ex: "Em andamento") |
 | `opening`       | TIMESTAMPTZ               | Data de abertura                        |
 | `last_update`   | TIMESTAMPTZ               | Data do ultimo tramite                  |
 | `sla_minutes`   | NUMERIC(10,2)             | SLA em minutos (tempo util)             |
@@ -695,6 +698,7 @@ Mapeamento de `childNodes`:
 | 2 | `number` | Numero do ticket (innerText) |
 | 2 | `link` | Link direto (extrai de `<a href>` se presente, senao fallback com `innerHTML.slice(33, 39)`) |
 | 3 | `title` | Titulo |
+| 4 | `status` | Status atual do ticket (ex: "Em andamento", "Pendente cliente", "Ticket aberto") |
 | 6 | `lastUpdate` / `lastUpdateDate` | Data do ultimo tramite (dd/mm/yyyy hh:mm ou dd/mm/yyyy hh:mm:ss) |
 | 7 | `opening` / `openingDate` | Data de abertura (dd/mm/yyyy hh:mm ou dd/mm/yyyy hh:mm:ss) |
 | 8 | `responsible` + `team` | Responsavel e equipe no formato "NOME.SOBRENOME (N1)". Regex `^(.+?)\s*\(.*\)$` extrai `responsible`; `split(' ')` + ultimo elemento extrai `team` |
