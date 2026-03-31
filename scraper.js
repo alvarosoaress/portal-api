@@ -556,7 +556,7 @@ function buildCustomSearchRequestBody(customSearchMenuId, callbackState, customO
  * 3. Paginar com PAGERONCLICK3|PBN para ObterListaPaginacao
  * 4. Para quando não há mais páginas (keys duplicadas, generalError, ou 0 tickets)
  * 
- * @param {string} customSearchMenuId - ID da busca salva no portal (ex: "28660")
+ * @param {string} customSearchMenuId - ID da busca salva no portal (ex: "28720")
  * @param {object} session - Instância do axios com cookies (sessão autenticada)
  * @param {function} loginFn - Função de login para re-autenticar se sessão expirar
  * @returns {Array} - Array com todos os tickets coletados

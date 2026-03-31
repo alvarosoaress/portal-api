@@ -96,8 +96,8 @@ async function runSLABackground(team) {
 
         // Scraping
         slaBackground.phase = 'scraping';
-        console.log('[sla-bg] Buscando tickets via customSearchMenu=28660...');
-        const tickets = await fetchCustomSearchTickets('28660', session, login);
+        console.log('[sla-bg] Buscando tickets via customSearchMenu=28720...');
+        const tickets = await fetchCustomSearchTickets('28720', session, login);
         console.log(`[sla-bg] ${tickets.length} tickets encontrados. Calculando SLA...`);
 
         // Calculo de SLA

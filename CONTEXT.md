@@ -91,8 +91,8 @@ Response:
 
 ```json
 {
-  "message": "Scraping concluido para customSearchMenu=28660",
-  "customSearchMenuId": "28660",
+  "message": "Scraping concluido para customSearchMenu=28720",
+  "customSearchMenuId": "28720",
   "ticketCount": 45,
   "tickets": [
     {
@@ -126,7 +126,7 @@ Busca quem visualizou um ticket.
 
 ### `POST /sla`
 
-Calcula o SLA e VOC de todos os tickets retornados pela busca salva `customSearchMenu=28660` (tickets do time de atendimento N1). O time de atendentes e parametrizado via body JSON.
+Calcula o SLA e VOC de todos os tickets retornados pela busca salva `customSearchMenu=28720` (tickets do time de atendimento N1 + tickets do time de produto). O time de pessoas e parametrizado via body JSON.
 
 **Resposta imediata + processamento em background**: A rota responde instantaneamente com dados ja persistidos no banco (`sla_snapshots`) e dispara o recalculo de SLA em background, sem bloquear a resposta HTTP. Isso evita que o cliente espere ~4 minutos pelo scraping + calculo.
 
@@ -300,9 +300,9 @@ Controla o processamento assincrono de SLA:
 ```js
 const slaBackground = {
   isProcessing: false, // true enquanto o background job esta rodando
-  startedAt: null,     // Date de inicio
-  lastError: null,     // mensagem de erro (null se ok)
-  phase: 'idle',       // 'idle'|'login'|'scraping'|'calculating'|'persisting'|'done'|'error'
+  startedAt: null, // Date de inicio
+  lastError: null, // mensagem de erro (null se ok)
+  phase: "idle", // 'idle'|'login'|'scraping'|'calculating'|'persisting'|'done'|'error'
 };
 ```
 
@@ -344,27 +344,27 @@ Fluxo:
 
 Snapshot por ticket (upsert, uma row por ticket atualizada a cada execucao de `/sla`):
 
-| Coluna          | Tipo                      | Descricao                               |
-| --------------- | ------------------------- | --------------------------------------- |
-| `ticket_id`     | INTEGER PRIMARY KEY       | ID numerico do ticket (extraido da URL) |
-| `number`        | VARCHAR(20) NOT NULL      | Numero formatado (ex: "0326-005932")    |
-| `title`         | TEXT                      | Titulo do ticket                        |
-| `client`        | VARCHAR(100)              | Cliente                                 |
-| `module`        | VARCHAR(50)               | Modulo                                  |
-| `group`         | VARCHAR(100)              | Grupo de atendimento                    |
-| `person`        | VARCHAR(100)              | Pessoa associada no portal              |
-| `responsible`   | VARCHAR(100)              | Responsavel atual (extraido do grid)    |
-| `team`          | VARCHAR(20)               | Equipe (ex: "N1")                       |
+| Coluna          | Tipo                      | Descricao                                   |
+| --------------- | ------------------------- | ------------------------------------------- |
+| `ticket_id`     | INTEGER PRIMARY KEY       | ID numerico do ticket (extraido da URL)     |
+| `number`        | VARCHAR(20) NOT NULL      | Numero formatado (ex: "0326-005932")        |
+| `title`         | TEXT                      | Titulo do ticket                            |
+| `client`        | VARCHAR(100)              | Cliente                                     |
+| `module`        | VARCHAR(50)               | Modulo                                      |
+| `group`         | VARCHAR(100)              | Grupo de atendimento                        |
+| `person`        | VARCHAR(100)              | Pessoa associada no portal                  |
+| `responsible`   | VARCHAR(100)              | Responsavel atual (extraido do grid)        |
+| `team`          | VARCHAR(20)               | Equipe (ex: "N1")                           |
 | `status`        | VARCHAR(50)               | Status atual do ticket (ex: "Em andamento") |
-| `opening`       | TIMESTAMPTZ               | Data de abertura                        |
-| `last_update`   | TIMESTAMPTZ               | Data do ultimo tramite                  |
-| `sla_minutes`   | NUMERIC(10,2)             | SLA em minutos (tempo util)             |
-| `sla_formatted` | VARCHAR(30)               | SLA formatado (ex: "2h 31min")          |
-| `voc_minutes`   | NUMERIC(10,2)             | VOC em minutos (tempo corrido)          |
-| `voc_formatted` | VARCHAR(30)               | VOC formatado (ex: "3d 2h")             |
-| `processed_at`  | TIMESTAMPTZ NOT NULL      | Timestamp da execucao de /sla           |
-| `created_at`    | TIMESTAMPTZ DEFAULT NOW() | Primeira insercao                       |
-| `updated_at`    | TIMESTAMPTZ DEFAULT NOW() | Ultima atualizacao                      |
+| `opening`       | TIMESTAMPTZ               | Data de abertura                            |
+| `last_update`   | TIMESTAMPTZ               | Data do ultimo tramite                      |
+| `sla_minutes`   | NUMERIC(10,2)             | SLA em minutos (tempo util)                 |
+| `sla_formatted` | VARCHAR(30)               | SLA formatado (ex: "2h 31min")              |
+| `voc_minutes`   | NUMERIC(10,2)             | VOC em minutos (tempo corrido)              |
+| `voc_formatted` | VARCHAR(30)               | VOC formatado (ex: "3d 2h")                 |
+| `processed_at`  | TIMESTAMPTZ NOT NULL      | Timestamp da execucao de /sla               |
+| `created_at`    | TIMESTAMPTZ DEFAULT NOW() | Primeira insercao                           |
+| `updated_at`    | TIMESTAMPTZ DEFAULT NOW() | Ultima atualizacao                          |
 
 ### Upsert (`service.js`)
 
@@ -420,6 +420,7 @@ Modulo de acesso a dados para a tabela `TICKETS`. Usa o mesmo `sql` (postgres) d
   - Header presente e identico a `API_KEY` -> prossegue para a rota
 
   Exemplo de requisicao:
+
   ```
   curl -H "Authorization: <sua-chave-de-104-caracteres>" http://localhost:3210/sla/status
   ```
@@ -517,7 +518,7 @@ POST /Ticket/indexPartial  (com customSearchmenu={id})
 
 Retorna array de **todos** os tickets da busca salva.
 
-O `customSearchMenu` e um ID numerico que identifica um filtro pre-configurado no portal GUI. O usuario cria esses filtros manualmente no portal e captura o ID da requisicao do browser. Exemplo: `28660` = tickets com time de atendimento N1.
+O `customSearchMenu` e um ID numerico que identifica um filtro pre-configurado no portal GUI. O usuario cria esses filtros manualmente no portal e captura o ID da requisicao do browser. Exemplo: `28720` = tickets com time de atendimento N1 + de produto.
 
 Diferencas em relacao ao `fetchAllTickets`:
 
